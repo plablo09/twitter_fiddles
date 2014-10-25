@@ -3,10 +3,10 @@ import tweepy
 import csv
 
 #pass security information to variables
-consumer_key = "13TegYgQ9F3FyShqB47LFsrM4"
-consumer_secret = "zMOQluT6jUJj4xmZrEBoknzI6cHBEWIq2GvQbmLmUfpDG5q8pP"
-access_key = "113179867-1XjAkP3BmB4NhvEWyYhFj3SDLTCdLQJClZQSpAgW"
-access_secret = "30PVB8MFawR0cfkPfPDZKEBr6XZGkx3anEUHo5yDsPiyX"
+consumer_key = "xxxxx"
+consumer_secret = "xxsxxx"
+access_key = "xxxxxx"
+access_secret = "xxxxxxxxxxxxxxxxxxxxxxx"
 
 
 #use variables to access twitter
