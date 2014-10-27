@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import datetime
 import sys
 from TwitterSearch import *
 #
@@ -22,8 +22,9 @@ def search_twitter(credentials,keywords):
     tso = TwitterSearchOrder() # create a TwitterSearchOrder object
     tso.setKeywords(keywords) # let's define all words we would like to have a look for
     #tso.setLanguage('de') # we want to see German tweets only
-    tso.setCount(7) # please dear Mr Twitter, only give us 7 results per page
+    tso.setCount(100) # please dear Mr Twitter, only give us 7 results per page
     tso.setIncludeEntities(False) # and don't give us all those entity information
+    #tso.setUntil(<datetime.date>)
     print tso.createSearchURL()
     # it's about time to create a TwitterSearch object with our secret tokens
     ts = TwitterSearch(
