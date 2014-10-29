@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import psycopg2 as psy
+from datetime import datetime
 
 
 
@@ -18,20 +19,32 @@ class PgPersistence():
     """
 
     def __init__(self,conn_params):
+        print "siiiii"
         conn_str =" host='localhost' dbname='twitter_feed'" + "user=" + \
                     conn_params["dbuser"] + " password=" + conn_params["dbpassword"]
-        print conn_str
+
         try:
             self.conn = psy.connect(conn_str)
         except psy.Error, e:
             print e.pgerror
 
-        #self.table = "tweets"
 
 
     def insert_row(self,row):
+        """Inserta la fila en la base de datos.
 
+        Da formato las coordenadas antes de mandar a la BD.
+
+        @param row list [user,text,date,coordenadas]
+        """
+        print 'entre'
         cur = self.conn.cursor()
-        sql = "INSERT INTO tweets VALUES (%s,%s,%s);"
-        cur.execute(sql,row)
+        lat_lon = row.pop()
+        cur.execute("SELECT ST_SetSRID(ST_MakePoint(%s, %s),4326);",lat_lon)
+        point_wkb = cur.fetchall()
+        row.append(point_wkb[0])
+        query = """INSERT INTO tweets(uname,text,fecha,hora,geom) VALUES (%s,%s,%s,%s,%s);"""
+        print query
+        print row
+        cur.execute(query,row)
         self.conn.commit()
