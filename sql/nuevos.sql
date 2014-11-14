@@ -50,22 +50,3 @@ create table morning_paths
 )
 
 ALTER TABLE morning_paths ADD COLUMN id BIGSERIAL PRIMARY KEY;
-
-#----------------------------------
-#Popular la tabla con un día específico y un intervalo de horas
-#
-#-----------------------------------
-insert into morning_paths (uname,geom)
-(
-select  uname, ST_MAKELINE(geom) from(
-	SELECT uname,  geom, hora, min(hora)
-	OVER (PARTITION BY uname ORDER BY hora DESC)
-	from (
-		select * from tweets where fecha = '2014-11-6' and (hora>='13:00:00' and hora <='17:00:00')
-		and uname in (
-			select uname from tweets group by uname having count(uname)>1
-		)
-	) as bar
-) as foo
-Group BY uname
-)
