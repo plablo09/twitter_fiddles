@@ -2,7 +2,7 @@
 #################################
 #Crear una tabla con los tweets rectificados:
 #-reproyectados a 32614
-#-corregidas la fecha y la hora al uso de la ciudad de méxico 
+#-corregidas la fecha y la hora al uso de la ciudad de méxico
 #################################
 #-----------------------------------
 
@@ -22,3 +22,21 @@ fecha_hora = to_timestamp(fecha::text|| ' ' || hora::text,'YYYY-MM-DD HH24:MI:SS
 
 update tweets_rectificado set fecha = fecha_hora::date;
 update tweets_rectificado set hora = fecha_hora::time;
+
+#----------------------------------
+#################################
+#Actualizar la tabla rectificada con los valores
+#de la tabla tweets desde la última actualización
+#
+#################################
+    #-----------------------------------
+
+insert into tweets_rectificado (id, uname, "text", fecha, hora, geom, fecha_hora)
+    (
+        select id, uname, "text", (to_timestamp(fecha::text|| ' ' || hora::text,'YYYY-MM-DD HH24:MI:SS')- interval '6 hours')::date,
+        (to_timestamp(fecha::text|| ' ' || hora::text,'YYYY-MM-DD HH24:MI:SS')- interval '6 hours')::time,
+        ST_Transform(geom, 32614),
+        to_timestamp(fecha::text|| ' ' || hora::text,'YYYY-MM-DD HH24:MI:SS')- interval '6 hours'
+        from tweets where
+        to_timestamp(fecha::text|| ' ' || hora::text,'YYYY-MM-DD HH24:MI:SS') >(select max(fecha_hora) + interval '6 hours' from tweets_rectificado)
+    )
