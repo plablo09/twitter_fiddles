@@ -13,7 +13,7 @@
 #-----------------------------------
 insert into morning_paths (uname,geom)
 (
-select  uname, ST_MAKELINE(geom) from(
+select row_number() over() as id, uname, ST_MAKELINE(geom) from(
     SELECT uname,  geom, hora, min(hora)
     OVER (PARTITION BY uname ORDER BY hora DESC)
     from (
@@ -25,6 +25,26 @@ select  uname, ST_MAKELINE(geom) from(
 ) as foo
 Group BY uname
 )
+
+
+#----------------------------------
+#La misma que la anterior pero usando los tweets rectificados
+#y seleccionando todos los weekdays que se tienen muestreados
+#-----------------------------------
+create table morning_paths as select * from
+    (
+        select  row_number() over() as id, uname, ST_MAKELINE(geom) from(
+            SELECT uname,  geom, hora, min(hora)
+            OVER (PARTITION BY uname ORDER BY hora DESC)
+            from (
+                select * from tweets_rectificado
+                where extract(dow from fecha_hora) not in (0,6)
+                and (hora>='06:00:00' and hora <='10:00:00')
+                and uname in (select uname from tweets_rectificado group by uname having count(uname)>1)
+            ) as bar
+        ) as foo
+        Group BY uname
+    ) as ext
 
 #----------------------------------
 #crear y popular la tabla con los puntos de origen y
