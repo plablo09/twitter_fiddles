@@ -33,7 +33,7 @@ Group BY uname
 #-----------------------------------
 create table morning_paths as select * from
     (
-        select  row_number() over() as id, uname, ST_MAKELINE(geom) from(
+        select  row_number() over() as id, uname, ST_MAKELINE(geom) as geom from(
             SELECT uname,  geom, hora, min(hora)
             OVER (PARTITION BY uname ORDER BY hora DESC)
             from (
